@@ -1,76 +1,151 @@
 /* src/styles/BudgetCalculator.css */
 .budget-calculator-container {
-  max-width: 980px;
+  max-width: 880px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 2.5rem 2.5rem 1.5rem;
   font-family: 'Inter', 'Helvetica Neue', sans-serif;
   background-color: #fff;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
 }
 
-.budget-calculator-header {
+.calculator-title {
+  font-size: 1.8rem;
   text-align: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #eaeaea;
-}
-
-.budget-calculator-header h1 {
-  font-size: 2rem;
-  margin: 0 0 0.5rem;
-  color: #333;
-  font-weight: 700;
-}
-
-.subtitle {
-  font-size: 1rem;
-  color: #666;
-  margin: 0;
-  font-weight: 400;
+  margin: 0 0 2.5rem;
+  color: #293A61;
+  font-weight: 600;
 }
 
 .budget-calculator-content {
   display: flex;
   flex-direction: row;
-  gap: 2rem;
+  gap: 3rem;
+  margin-bottom: 2rem;
 }
 
 .input-section {
   flex: 1;
-  max-width: 50%;
+  max-width: 45%;
 }
 
 .visualization-section {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
   align-items: center;
+  padding-top: 0.75rem;
 }
 
-.income-section, .expenses-section {
-  margin-bottom: 2rem;
-}
-
-.income-section h2, .expenses-section h2 {
-  font-size: 1.25rem;
+/* Income and Expenses Headers */
+.income-header, .expenses-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.65rem 1rem;
+  margin-bottom: 0.75rem;
+  border-radius: 4px;
   color: #333;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid #eaeaea;
 }
 
+.income-header {
+  background-color: #e3f2fd;
+}
+
+.expenses-header {
+  background-color: #fff8e1;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.income-header h2, .expenses-header h2 {
+  font-size: 1rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+.income-amount, .expenses-amount {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* Input fields */
 .input-group {
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.9rem;
+  position: relative;
 }
 
 .input-group label {
-  display: block;
-  margin-bottom: 0.5rem;
+  display: flex;
+  margin-bottom: 0.35rem;
   color: #333;
   font-size: 0.9rem;
   font-weight: 500;
+  align-items: center;
+}
+
+.category-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+/* Tooltip styles */
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+  margin-left: 5px;
+}
+
+.info-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  color: #666;
+  font-size: 0.7rem;
+  cursor: help;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  width: 200px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -100px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 0.75rem;
+  font-weight: normal;
+  pointer-events: none;
+}
+
+.tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
 }
 
 .input-container {
@@ -86,60 +161,54 @@
   z-index: 1;
 }
 
-.color-indicator {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 1;
-}
-
 .full-width-input {
   width: 100%;
-  padding: 12px 12px 12px 36px;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 1rem;
+  padding: 0.65rem 0.65rem 0.65rem 28px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.95rem;
   transition: all 0.2s ease;
   box-sizing: border-box;
+  border-left-width: 4px;
 }
 
 .income-input .full-width-input {
-  padding-left: 24px;
-  border-color: #2e7d32;
-  background-color: rgba(46, 125, 50, 0.05);
+  border-color: #1976D2;
+  border-left-width: 4px;
 }
 
 .full-width-input:focus {
   outline: none;
-  border-color: #2196F3;
-  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
 }
 
+/* Monthly Budget Overview */
+.monthly-overview {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+
+.monthly-overview h3 {
+  font-size: 1rem;
+  color: #333;
+  margin: 0;
+  font-weight: 600;
+}
+
+/* Chart */
 .chart-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
-  margin-bottom: 2rem;
-}
-
-.chart-title {
-  font-size: 1.25rem;
-  color: #333;
-  margin-bottom: 1.5rem;
-  font-weight: 600;
-  text-align: center;
+  margin-bottom: 2.5rem;
 }
 
 .donut-chart {
   position: relative;
-  width: 280px;
-  height: 280px;
-  margin-bottom: 1.5rem;
+  width: 300px;
+  height: 300px;
 }
 
 .chart-inner {
@@ -150,13 +219,12 @@
   text-align: center;
   background-color: white;
   border-radius: 50%;
-  width: 60%;
-  height: 60%;
+  width: 65%;
+  height: 65%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
 
 .chart-inner h3 {
@@ -168,7 +236,7 @@
 
 .chart-inner p {
   margin: 5px 0 0;
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 700;
   color: #333;
 }
@@ -176,7 +244,7 @@
 .chart-inner .percentage {
   font-size: 0.8rem;
   color: #666;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .circular-chart {
@@ -189,171 +257,145 @@
 .circle-bg {
   fill: none;
   stroke: #eee;
-  stroke-width: 3.8;
+  stroke-width: 3.2;
 }
 
 .circle {
   fill: none;
-  stroke-width: 3.8;
-  stroke-linecap: round;
+  stroke-width: 3.2;
   transition: all 0.3s ease;
 }
 
-/* Chart Legend */
-.chart-legend {
-  width: 100%;
-  margin-top: 0.5rem;
+/* Empty chart placeholder */
+.empty-chart-placeholder {
+  width: 300px;
+  height: 300px;
+  margin-bottom: 2.5rem;
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.legend-item {
-  display: flex;
+  justify-content: center;
   align-items: center;
-  padding: 8px 12px;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  transition: all 0.2s ease;
 }
 
-.legend-item:hover {
-  background-color: #f0f0f0;
-  transform: translateX(2px);
-}
-
-.legend-color {
-  width: 12px;
-  height: 12px;
+.empty-chart-circle {
+  width: 100%;
+  height: 100%;
+  position: relative;
   border-radius: 50%;
-  margin-right: 8px;
+  border: 3.2px solid #eee;
 }
 
-.legend-label {
-  flex: 1;
-  font-size: 0.85rem;
-  color: #333;
-}
-
-.legend-value {
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: #333;
-  margin-right: 8px;
-}
-
-.legend-percentage {
-  font-size: 0.8rem;
-  color: #666;
-  min-width: 50px;
-  text-align: right;
-}
-
-/* Chart Total */
-.chart-total {
-  width: 100%;
-  margin-top: 1.5rem;
-  padding: 1rem;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.total-label {
-  font-size: 0.9rem;
-  color: #666;
-  font-weight: 500;
-}
-
-.total-value {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #333;
-}
-
-.total-percentage {
-  font-size: 0.8rem;
-  color: #666;
-  margin-top: 0.5rem;
-  width: 100%;
-  text-align: right;
-}
-
-.left-to-spend {
-  width: 100%;
-  padding: 1.5rem;
-  border-radius: 12px;
-  background-color: #E8F5E9;
-  margin-top: 1rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-}
-
-.left-to-spend.negative {
-  background-color: #FFEBEE;
-}
-
-.left-to-spend-content {
+.empty-chart-inner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   text-align: center;
 }
 
-.left-to-spend h3 {
-  margin: 0 0 0.5rem;
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: #333;
+.empty-chart-inner h3 {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
 }
 
-.left-to-spend .amount {
-  margin: 0 0 0.5rem;
+.empty-chart-inner p {
   font-size: 2rem;
   font-weight: 700;
-  color: #2e7d32;
+  color: #333;
+  margin: 5px 0 0;
 }
 
-.left-to-spend.negative .amount {
-  color: #d32f2f;
+/* Available section */
+.available-section {
+  background-color: #F5F5F5;
+  border-radius: 6px;
+  padding: 1.4rem 1.5rem;
+  text-align: center;
+  width: 65%;
+  margin-top: 0.5rem;
 }
 
-.status-indicator {
-  display: inline-block;
-  padding: 0.3rem 0.8rem;
-  font-size: 0.8rem;
+.available-section h3 {
+  font-size: 1rem;
+  color: #333;
+  margin: 0 0 0.8rem;
   font-weight: 600;
+}
+
+.available-amount {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #4CAF50;
+  margin-bottom: 1rem;
+}
+
+.available-amount.negative {
+  color: #F44336;
+}
+
+.budget-status {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.3rem 1.2rem;
   border-radius: 20px;
   background-color: #4CAF50;
   color: white;
 }
 
-.left-to-spend.negative .status-indicator {
+.negative-status {
   background-color: #F44336;
 }
 
-.empty-chart-placeholder {
-  width: 280px;
-  height: 280px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* Color keys */
+.color-keys {
+  margin: 1.5rem 0 0.5rem;
   text-align: center;
-  border: 2px dashed #e0e0e0;
-  border-radius: 50%;
-  color: #999;
-  padding: 2rem;
-  margin-bottom: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.color-bar {
+  height: 15px;
+  width: 100%;
+  border-radius: 3px;
+  background: linear-gradient(to right, 
+    #3949AB, 
+    #4FC3F7, 
+    #4CAF50, 
+    #AFB42B, 
+    #FFD54F, 
+    #FF9800, 
+    #F44336
+  );
+}
+
+/* Swipe Logo */
+.swipe-logo-container {
+  text-align: center;
+  margin-top: 1.8rem;
+  color: #a0a0a0;
+  font-size: 0.85rem;
+}
+
+.swipe-logo-text {
+  margin-bottom: 0.4rem;
+}
+
+.swipe-logo {
+  height: 18px;
+  opacity: 0.6;
 }
 
 /* Responsive styles */
 @media (max-width: 768px) {
   .budget-calculator-container {
-    padding: 1rem;
+    padding: 1.2rem;
   }
   
   .budget-calculator-content {
     flex-direction: column;
+    gap: 1rem;
   }
   
   .input-section {
@@ -362,5 +404,22 @@
   
   .visualization-section {
     margin-top: 2rem;
+    width: 100%;
+    padding-top: 0;
+  }
+
+  .available-section {
+    width: 85%;
+  }
+  
+  .calculator-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .donut-chart,
+  .empty-chart-placeholder {
+    width: 250px;
+    height: 250px;
   }
 }

@@ -5,4 +5,5 @@ export interface BudgetCategory {
     type: 'need' | 'want';
     amount: number;
     color: string;
+    tooltip: string;
   }

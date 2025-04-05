@@ -3,64 +3,73 @@ import React, { useState, useEffect } from 'react';
 import { BudgetCategory } from '../types/budgetTypes';
 import DonutChart from './DonutChart';
 import '../styles/BudgetCalculator.css';
+import swipeLogo from '../assets/swipe-logo.svg';
 
 const BudgetCalculator: React.FC = () => {
   // Initial categories based on the requirements
   const initialCategories: BudgetCategory[] = [
     {
       id: 'housing',
-      name: 'Rent/Mortgage',
+      name: 'Housing',
       type: 'need',
       amount: 0,
       color: '#3949AB',
+      tooltip: 'What you spend on Rent, Mortgage, HOA Fees'
     },
     {
       id: 'utilities',
-      name: 'Utilities + other bills',
-      type: 'need',
-      amount: 0,
-      color: '#E53935',
-    },
-    {
-      id: 'food',
-      name: 'Food and groceries',
+      name: 'Utilities + Other Bills',
       type: 'need',
       amount: 0,
       color: '#4FC3F7',
+      tooltip: 'Water, Gas, Electricity, Internet, Phone, Insurance'
     },
     {
-      id: 'debt',
-      name: 'Credit cards + other debt',
+      id: 'food',
+      name: 'Food + Personal',
       type: 'need',
       amount: 0,
-      color: '#1976D2',
+      color: '#4CAF50',
+      tooltip: 'Food, Household Items, Laundry, Pet, Health, Medical'
     },
     {
       id: 'transportation',
       name: 'Transportation',
       type: 'need',
       amount: 0,
-      color: '#8BC34A',
+      color: '#AFB42B',
+      tooltip: 'Car Insurance, Gas, Tolls, Maintenance, Public Transportation'
     },
     {
       id: 'savings',
-      name: 'Save and invest',
+      name: 'Save + Invest',
       type: 'need',
       amount: 0,
-      color: '#1E88E5',
+      color: '#FFD54F',
+      tooltip: 'Emergency Fund, Investments, Retirement'
     },
     {
-      id: 'online',
-      name: 'How much you plan to spend online',
+      id: 'entertainment',
+      name: 'Entertainment + Other',
       type: 'want',
       amount: 0,
-      color: '#9C27B0',
+      color: '#FF9800',
+      tooltip: 'What you spend on fun activities: Travel, Going Out, Subscriptions, Gifts, Beauty, Clothes'
+    },
+    {
+      id: 'debt',
+      name: 'Debt Repayment',
+      type: 'need',
+      amount: 0,
+      color: '#F44336',
+      tooltip: 'Loans, Credit Cards, Car Payments'
     }
   ];
 
   const [income, setIncome] = useState<number>(0);
   const [categories, setCategories] = useState<BudgetCategory[]>(initialCategories);
   const [leftToSpend, setLeftToSpend] = useState<number>(0);
+  const [totalExpenses, setTotalExpenses] = useState<number>(0);
 
   // Handle income change
   const handleIncomeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,87 +89,118 @@ const BudgetCalculator: React.FC = () => {
     );
   };
 
-  // Calculate left to spend
+  // Calculate left to spend and total expenses
   useEffect(() => {
-    const totalExpenses = categories.reduce((sum, category) => sum + category.amount, 0);
-    setLeftToSpend(income - totalExpenses);
+    const total = categories.reduce((sum, category) => sum + category.amount, 0);
+    setTotalExpenses(total);
+    setLeftToSpend(income - total);
   }, [income, categories]);
+
+  // Format currency
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
 
   return (
     <div className="budget-calculator-container">
-      <div className="budget-calculator-header">
-        <h1>Simple Budget Calculator</h1>
-        <p className="subtitle">Plan your monthly budget with ease</p>
-      </div>
+      <h2 className="calculator-title">Simple Budget Calculator</h2>
       
       <div className="budget-calculator-content">
         <div className="input-section">
           {/* Income Section */}
-          <div className="income-section">
+          <div className="income-header">
             <h2>Monthly Income</h2>
-            <div className="input-group income-input">
-              <label htmlFor="monthly-income">After taxes</label>
-              <div className="input-container">
-                <span className="dollar-sign">$</span>
-                <input
-                  id="monthly-income"
-                  type="number"
-                  value={income || ''}
-                  onChange={handleIncomeChange}
-                  placeholder="0.00"
-                  className="full-width-input"
-                />
-              </div>
+            <span className="income-amount">{formatCurrency(income)}</span>
+          </div>
+          
+          <div className="input-group income-input">
+            <label htmlFor="monthly-income">Income after taxes</label>
+            <div className="input-container">
+              <span className="dollar-sign">$</span>
+              <input
+                id="monthly-income"
+                type="number"
+                value={income || ''}
+                onChange={handleIncomeChange}
+                placeholder="0"
+                className="full-width-input"
+              />
             </div>
           </div>
 
           {/* Expenses Section */}
-          <div className="expenses-section">
+          <div className="expenses-header">
             <h2>Monthly Expenses</h2>
-            {categories.map((category) => (
-              <div key={category.id} className="input-group">
-                <label htmlFor={`category-${category.id}`}>{category.name}</label>
-                <div className="input-container">
-                  <span className="color-indicator" style={{ backgroundColor: category.color }}></span>
-                  <span className="dollar-sign">$</span>
-                  <input
-                    id={`category-${category.id}`}
-                    type="number"
-                    value={category.amount || ''}
-                    onChange={(e) => handleCategoryChange(category.id, e)}
-                    placeholder="0.00"
-                    className="full-width-input"
-                    style={{ borderColor: category.color }}
-                  />
-                </div>
-              </div>
-            ))}
+            <span className="expenses-amount">{formatCurrency(totalExpenses)}</span>
           </div>
+          
+          {categories.map((category) => (
+            <div key={category.id} className="input-group">
+              <label htmlFor={`category-${category.id}`}>
+                <span className="category-dot" style={{ backgroundColor: category.color }}></span>
+                {category.name}
+                <div className="tooltip-container">
+                  <span className="info-icon">ⓘ</span>
+                  <span className="tooltip-text">{category.tooltip}</span>
+                </div>
+              </label>
+              <div className="input-container">
+                <span className="dollar-sign">$</span>
+                <input
+                  id={`category-${category.id}`}
+                  type="number"
+                  value={category.amount || ''}
+                  onChange={(e) => handleCategoryChange(category.id, e)}
+                  placeholder="0"
+                  className="full-width-input"
+                  style={{ borderColor: category.color }}
+                />
+              </div>
+            </div>
+          ))}
         </div>
         
         <div className="visualization-section">
+          <div className="monthly-overview">
+            <h3>Monthly Budget Overview</h3>
+          </div>
+          
           {/* Donut Chart */}
           {income > 0 ? (
-            <DonutChart income={income} categories={categories} />
+            <DonutChart income={income} categories={categories} totalExpenses={totalExpenses} />
           ) : (
             <div className="empty-chart-placeholder">
-              <p>Enter your income to see your budget breakdown</p>
+              <div className="empty-chart-circle">
+                <div className="empty-chart-inner">
+                  <h3>Total Spent</h3>
+                  <p>$0</p>
+                </div>
+              </div>
             </div>
           )}
           
-          {/* Left to Spend */}
-          <div 
-            className={`left-to-spend ${leftToSpend < 0 ? 'negative' : ''}`}
-          >
-            <div className="left-to-spend-content">
-              <h3>Left to Spend</h3>
-              <p className="amount">${leftToSpend.toFixed(2)}</p>
-              <div className="status-indicator">
-                {leftToSpend >= 0 ? 'On Budget' : 'Over Budget'}
-              </div>
+          {/* Available Section */}
+          <div className="available-section">
+            <h3>Available</h3>
+            <div className={`available-amount ${leftToSpend < 0 ? 'negative' : ''}`}>
+              {formatCurrency(leftToSpend)}
+            </div>
+            <div className={`budget-status ${leftToSpend < 0 ? 'negative-status' : ''}`}>
+              {leftToSpend >= 0 ? 'On Budget' : 'Over Budget'}
             </div>
           </div>
         </div>
+      </div>
+      
+      {/* Swipe Logo */}
+      <div className="swipe-logo-container">
+        <div className="swipe-logo-text">spend money smarter with</div>
+        <img src={swipeLogo} alt="Swipe Swipe" className="swipe-logo" />
       </div>
     </div>
   );
