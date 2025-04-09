@@ -6,14 +6,14 @@ import '../styles/BudgetCalculator.css';
 import swipeLogo from '../assets/swipe-logo.svg';
 
 const BudgetCalculator: React.FC = () => {
-  // Initial categories based on the requirements
+  // Initial categories with updated colors from Figma
   const initialCategories: BudgetCategory[] = [
     {
       id: 'housing',
       name: 'Housing',
       type: 'need',
       amount: 0,
-      color: '#3949AB',
+      color: '#1273CD',
       tooltip: 'What you spend on Rent, Mortgage, HOA Fees'
     },
     {
@@ -21,7 +21,7 @@ const BudgetCalculator: React.FC = () => {
       name: 'Utilities + Other Bills',
       type: 'need',
       amount: 0,
-      color: '#4FC3F7',
+      color: '#26A7E1',
       tooltip: 'Water, Gas, Electricity, Internet, Phone, Insurance'
     },
     {
@@ -29,7 +29,7 @@ const BudgetCalculator: React.FC = () => {
       name: 'Food + Personal',
       type: 'need',
       amount: 0,
-      color: '#4CAF50',
+      color: '#30D5BC',
       tooltip: 'Food, Household Items, Laundry, Pet, Health, Medical'
     },
     {
@@ -37,7 +37,7 @@ const BudgetCalculator: React.FC = () => {
       name: 'Transportation',
       type: 'need',
       amount: 0,
-      color: '#AFB42B',
+      color: '#9AE31B',
       tooltip: 'Car Insurance, Gas, Tolls, Maintenance, Public Transportation'
     },
     {
@@ -45,7 +45,7 @@ const BudgetCalculator: React.FC = () => {
       name: 'Save + Invest',
       type: 'need',
       amount: 0,
-      color: '#FFD54F',
+      color: '#EADA2A',
       tooltip: 'Emergency Fund, Investments, Retirement'
     },
     {
@@ -53,7 +53,7 @@ const BudgetCalculator: React.FC = () => {
       name: 'Entertainment + Other',
       type: 'want',
       amount: 0,
-      color: '#FF9800',
+      color: '#F4B545',
       tooltip: 'What you spend on fun activities: Travel, Going Out, Subscriptions, Gifts, Beauty, Clothes'
     },
     {
@@ -61,7 +61,7 @@ const BudgetCalculator: React.FC = () => {
       name: 'Debt Repayment',
       type: 'need',
       amount: 0,
-      color: '#F44336',
+      color: '#FF6550',
       tooltip: 'Loans, Credit Cards, Car Payments'
     }
   ];
@@ -96,7 +96,7 @@ const BudgetCalculator: React.FC = () => {
     setLeftToSpend(income - total);
   }, [income, categories]);
 
-  // Format currency
+  // Format currency with commas
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -115,10 +115,10 @@ const BudgetCalculator: React.FC = () => {
           {/* Income Section */}
           <div className="income-header">
             <h2>Monthly Income</h2>
-            <span className="income-amount">{formatCurrency(income)}</span>
+            {income > 0 && <span className="income-amount">{formatCurrency(income)}</span>}
           </div>
           
-          <div className="input-group income-input">
+          <div className="input-row income-input">
             <label htmlFor="monthly-income">Income after taxes</label>
             <div className="input-container">
               <span className="dollar-sign">$</span>
@@ -128,7 +128,6 @@ const BudgetCalculator: React.FC = () => {
                 value={income || ''}
                 onChange={handleIncomeChange}
                 placeholder="0"
-                className="full-width-input"
               />
             </div>
           </div>
@@ -136,11 +135,11 @@ const BudgetCalculator: React.FC = () => {
           {/* Expenses Section */}
           <div className="expenses-header">
             <h2>Monthly Expenses</h2>
-            <span className="expenses-amount">{formatCurrency(totalExpenses)}</span>
+            {totalExpenses > 0 && <span className="expenses-amount">{formatCurrency(totalExpenses)}</span>}
           </div>
           
           {categories.map((category) => (
-            <div key={category.id} className="input-group">
+            <div key={category.id} className="input-row">
               <label htmlFor={`category-${category.id}`}>
                 <span className="category-dot" style={{ backgroundColor: category.color }}></span>
                 {category.name}
@@ -157,7 +156,6 @@ const BudgetCalculator: React.FC = () => {
                   value={category.amount || ''}
                   onChange={(e) => handleCategoryChange(category.id, e)}
                   placeholder="0"
-                  className="full-width-input"
                   style={{ borderColor: category.color }}
                 />
               </div>

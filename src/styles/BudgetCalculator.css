@@ -1,4 +1,4 @@
-/* src/styles/BudgetCalculator.css */
+/* Updated styles to fix input field issues */
 .budget-calculator-container {
   max-width: 880px;
   margin: 0 auto;
@@ -46,14 +46,15 @@
   margin-bottom: 0.75rem;
   border-radius: 4px;
   color: #333;
+  height: 48px; /* Set fixed height for consistency */
 }
 
 .income-header {
-  background-color: #e3f2fd;
+  background-color: #DEEFF2;
 }
 
 .expenses-header {
-  background-color: #fff8e1;
+  background-color: #FFEDCE;
   margin-top: 2rem;
   margin-bottom: 1rem;
 }
@@ -69,19 +70,25 @@
   font-size: 1rem;
 }
 
-/* Input fields */
-.input-group {
-  margin-bottom: 0.9rem;
-  position: relative;
+/* Input rows - horizontal layout */
+.input-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.65rem 1rem; /* Match padding with header fields */
+  margin-bottom: 0.6rem;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  height: 48px; /* Set fixed height to match header fields */
 }
 
-.input-group label {
+.input-row label {
   display: flex;
-  margin-bottom: 0.35rem;
+  align-items: center;
   color: #333;
   font-size: 0.9rem;
   font-weight: 500;
-  align-items: center;
+  flex: 1;
 }
 
 .category-dot {
@@ -103,20 +110,19 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  background-color: #e0e0e0;
-  color: #666;
-  font-size: 0.7rem;
+  color: #C2CDD1;
+  font-size: 1.2rem;
   cursor: help;
 }
 
 .tooltip-text {
   visibility: hidden;
   width: 200px;
-  background-color: #555;
-  color: #fff;
+  background-color: #fff;
+  color: #555;
   text-align: center;
   border-radius: 6px;
   padding: 8px;
@@ -130,6 +136,8 @@
   font-size: 0.75rem;
   font-weight: normal;
   pointer-events: none;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .tooltip-text::after {
@@ -140,7 +148,7 @@
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: #555 transparent transparent transparent;
+  border-color: #fff transparent transparent transparent;
 }
 
 .tooltip-container:hover .tooltip-text {
@@ -148,39 +156,79 @@
   opacity: 1;
 }
 
+/* Fixed input container and input styling */
 .input-container {
   position: relative;
   display: flex;
   align-items: center;
+  width: 120px;
+  height: 100%; /* Fill the parent height */
 }
 
 .dollar-sign {
   position: absolute;
-  left: 12px;
+  left: 0;
   color: #666;
   z-index: 1;
+  pointer-events: none;
+  width: 20px;
+  text-align: right;
 }
 
-.full-width-input {
+/* Remove background color to appear more like mockup */
+.input-container input {
+  background-color: transparent;
+  border: none;
   width: 100%;
-  padding: 0.65rem 0.65rem 0.65rem 28px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  height: 100%;
+  padding: 0.65rem 0.65rem 0.65rem 24px;
   font-size: 0.95rem;
   transition: all 0.2s ease;
   box-sizing: border-box;
-  border-left-width: 4px;
+  text-align: right; /* Right align the text */
 }
 
-.income-input .full-width-input {
-  border-color: #1976D2;
-  border-left-width: 4px;
+/* Remove left border for all inputs to match mockup */
+.input-row .input-container input {
+  border-left: none;
 }
 
-.full-width-input:focus {
+/* Remove blue border for income input */
+.income-input .input-container input {
+  border-left: none;
+}
+
+/* Adjust focus style to be more subtle */
+.input-container input:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+  background-color: rgba(250, 250, 250, 0.5);
+  box-shadow: none;
 }
+
+/* Add a vertical color indicator without changing input field */
+.input-row:not(.income-input) {
+  position: relative;
+}
+
+.input-row:not(.income-input)::before {
+  content: "";
+  position: absolute;
+  right: 120px; /* Aligns with the start of input field */
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background-color: var(--category-color, transparent);
+  border-radius: 2px;
+}
+
+/* Add category colors as CSS variables */
+#category-housing::before { --category-color: #1273CD; }
+#category-utilities::before { --category-color: #26A7E1; }
+#category-food::before { --category-color: #30D5BC; }
+#category-transportation::before { --category-color: #9AE31B; }
+#category-savings::before { --category-color: #EADA2A; }
+#category-entertainment::before { --category-color: #F4B545; }
+#category-debt::before { --category-color: #FF6550; }
 
 /* Monthly Budget Overview */
 .monthly-overview {
@@ -313,6 +361,7 @@
   text-align: center;
   width: 65%;
   margin-top: 0.5rem;
+  margin-bottom: 0;
 }
 
 .available-section h3 {
@@ -330,7 +379,7 @@
 }
 
 .available-amount.negative {
-  color: #F44336;
+  color: #FF6550;
 }
 
 .budget-status {
@@ -344,30 +393,7 @@
 }
 
 .negative-status {
-  background-color: #F44336;
-}
-
-/* Color keys */
-.color-keys {
-  margin: 1.5rem 0 0.5rem;
-  text-align: center;
-  padding-top: 1rem;
-  border-top: 1px solid #eee;
-}
-
-.color-bar {
-  height: 15px;
-  width: 100%;
-  border-radius: 3px;
-  background: linear-gradient(to right, 
-    #3949AB, 
-    #4FC3F7, 
-    #4CAF50, 
-    #AFB42B, 
-    #FFD54F, 
-    #FF9800, 
-    #F44336
-  );
+  background-color: #FF6550;
 }
 
 /* Swipe Logo */
@@ -421,5 +447,20 @@
   .empty-chart-placeholder {
     width: 250px;
     height: 250px;
+  }
+  
+  /* Switch to vertical layout on mobile */
+  .input-row {
+    flex-direction: column;
+    align-items: flex-start;
+    height: auto;
+  }
+  
+  .input-row label {
+    margin-bottom: 0.5rem;
+  }
+  
+  .input-container {
+    width: 100%;
   }
 }
