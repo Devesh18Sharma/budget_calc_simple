@@ -58,7 +58,7 @@ const BudgetCalculator: React.FC = () => {
     },
     {
       id: 'debt',
-      name: 'Debt Repayment',
+      name: 'Debt Repayments',
       type: 'need',
       amount: 0,
       color: '#FF6550',
@@ -70,16 +70,28 @@ const BudgetCalculator: React.FC = () => {
   const [categories, setCategories] = useState<BudgetCategory[]>(initialCategories);
   const [leftToSpend, setLeftToSpend] = useState<number>(0);
   const [totalExpenses, setTotalExpenses] = useState<number>(0);
+  const [formattedInputValues, setFormattedInputValues] = useState<{[key: string]: string}>({});
 
   // Handle income change
   const handleIncomeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value) || 0;
+    // Remove commas and non-numeric characters for calculation
+    const rawValue = e.target.value.replace(/[^0-9]/g, '');
+    const value = parseInt(rawValue) || 0;
     setIncome(value);
+    
+    // Format with commas for display
+    setFormattedInputValues({
+      ...formattedInputValues,
+      income: value ? value.toLocaleString() : ''
+    });
   };
 
   // Handle category amount change
   const handleCategoryChange = (categoryId: string, e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value) || 0;
+    // Remove commas and non-numeric characters for calculation
+    const rawValue = e.target.value.replace(/[^0-9]/g, '');
+    const value = parseInt(rawValue) || 0;
+    
     setCategories(prevCategories => 
       prevCategories.map(category => 
         category.id === categoryId 
@@ -87,6 +99,12 @@ const BudgetCalculator: React.FC = () => {
           : category
       )
     );
+    
+    // Format with commas for display
+    setFormattedInputValues({
+      ...formattedInputValues,
+      [categoryId]: value ? value.toLocaleString() : ''
+    });
   };
 
   // Calculate left to spend and total expenses
@@ -124,8 +142,8 @@ const BudgetCalculator: React.FC = () => {
               <span className="dollar-sign">$</span>
               <input
                 id="monthly-income"
-                type="number"
-                value={income || ''}
+                type="text"
+                value={formattedInputValues.income || ''}
                 onChange={handleIncomeChange}
                 placeholder="0"
               />
@@ -152,11 +170,10 @@ const BudgetCalculator: React.FC = () => {
                 <span className="dollar-sign">$</span>
                 <input
                   id={`category-${category.id}`}
-                  type="number"
-                  value={category.amount || ''}
+                  type="text"
+                  value={formattedInputValues[category.id] || ''}
                   onChange={(e) => handleCategoryChange(category.id, e)}
                   placeholder="0"
-                  style={{ borderColor: category.color }}
                 />
               </div>
             </div>
@@ -183,7 +200,7 @@ const BudgetCalculator: React.FC = () => {
           )}
           
           {/* Available Section */}
-          <div className="available-section">
+          <div className={`available-section ${leftToSpend < 0 ? 'negative-available' : 'positive-available'}`}>
             <h3>Available</h3>
             <div className={`available-amount ${leftToSpend < 0 ? 'negative' : ''}`}>
               {formatCurrency(leftToSpend)}

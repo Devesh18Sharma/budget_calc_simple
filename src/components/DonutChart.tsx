@@ -30,6 +30,9 @@ const DonutChart: React.FC<DonutChartProps> = ({ income, categories, totalExpens
     }).format(amount);
   };
 
+  // Calculate remaining percentage
+  const remainingPercentage = income > 0 ? 100 - percentageSpent : 0;
+
   return (
     <div className="chart-container">
       <div className="donut-chart">
@@ -42,13 +45,29 @@ const DonutChart: React.FC<DonutChartProps> = ({ income, categories, totalExpens
         </div>
         
         <svg viewBox="0 0 36 36" className="circular-chart">
-          <path 
+          <path
             className="circle-bg"
             d="M18 2.0845
               a 15.9155 15.9155 0 0 1 0 31.831
               a 15.9155 15.9155 0 0 1 0 -31.831"
             strokeWidth="3.2"
           />
+          
+          {/* Remaining balance segment with light gray color */}
+          {remainingPercentage > 0 && (
+            <circle
+              className="circle remaining"
+              stroke="#E8E8E8"
+              strokeWidth="3.2"
+              strokeDasharray={`${remainingPercentage} ${100 - remainingPercentage}`}
+              strokeDashoffset="0"
+              r="15.9155"
+              cx="18"
+              cy="18"
+              strokeLinecap="butt"
+            />
+          )}
+          
           {filteredCategories.reduce((acc, category, index, arr) => {
             // Calculate all previous percentages combined
             const previousPercentages = arr
