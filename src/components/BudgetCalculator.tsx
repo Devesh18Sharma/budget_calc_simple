@@ -4,6 +4,9 @@ import { BudgetCategory } from '../types/budgetTypes';
 import DonutChart from './DonutChart';
 import '../styles/BudgetCalculator.css';
 import swipeLogo from '../assets/swipe-logo.svg';
+import { budgetService, syncService } from '../api';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const BudgetCalculator: React.FC = () => {
   // Initial categories with updated colors from Figma
@@ -71,6 +74,116 @@ const BudgetCalculator: React.FC = () => {
   const [leftToSpend, setLeftToSpend] = useState<number>(0);
   const [totalExpenses, setTotalExpenses] = useState<number>(0);
   const [formattedInputValues, setFormattedInputValues] = useState<{[key: string]: string}>({});
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  // Fetch budget data on component mount
+  useEffect(() => {
+    fetchBudgetData();
+    
+    // Set up polling for updates
+    const updateInterval = setInterval(checkForUpdates, 30000); // Check every 30 seconds
+    
+    return () => {
+      clearInterval(updateInterval);
+    };
+  }, []);
+
+  // Auto-sync effect - triggers when income or categories change
+  useEffect(() => {
+    if (!isLoading) {
+      const budgetData = budgetService.convertToBudgetData(income, categories);
+      syncService.autoSyncBudget(budgetData);
+    }
+  }, [income, categories, isLoading]);
+
+  const fetchBudgetData = async () => {
+    try {
+      setIsLoading(true);
+      const data = await budgetService.getBudget();
+      
+      if (data) {
+        setIncome(data.income);
+        setFormattedInputValues({
+          income: data.income ? data.income.toLocaleString() : ''
+        });
+        
+        // Update categories with values from the API
+        setCategories(prevCategories => 
+          prevCategories.map(category => {
+            const amount = Number(data[category.id as keyof typeof data]) || 0;
+            setFormattedInputValues(prev => ({
+              ...prev,
+              [category.id]: amount ? amount.toLocaleString() : ''
+            }));
+            return {
+              ...category,
+              amount
+            };
+          })
+        );
+      }
+    } catch (error) {
+      console.error('Error fetching budget data:', error);
+      // Silently fail if user is not logged in or has no data yet
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Check for updates from the server
+  const checkForUpdates = async () => {
+    try {
+      const latestData = await syncService.checkForUpdates();
+      if (latestData) {
+        // Only update if the data is different to avoid unnecessary re-renders
+        if (JSON.stringify(latestData) !== JSON.stringify(budgetService.convertToBudgetData(income, categories))) {
+          setIncome(latestData.income);
+          setFormattedInputValues({
+            income: latestData.income ? latestData.income.toLocaleString() : ''
+          });
+          
+          // Update categories with values from the API
+          setCategories(prevCategories => 
+            prevCategories.map(category => {
+              const amount = Number(latestData[category.id as keyof typeof latestData]) || 0;
+              setFormattedInputValues(prev => ({
+                ...prev,
+                [category.id]: amount ? amount.toLocaleString() : ''
+              }));
+              return {
+                ...category,
+                amount
+              };
+            })
+          );
+        }
+      }
+    } catch (error) {
+      console.error('Error checking for updates:', error);
+    }
+  };
+
+  // Save budget data to API
+  const saveBudgetData = async () => {
+    try {
+      setIsSaving(true);
+      const budgetData = budgetService.convertToBudgetData(income, categories);
+      await budgetService.saveBudget(budgetData);
+      toast.success('Budget saved successfully!');
+    } catch (error: any) {
+      console.error('Error saving budget data:', error);
+      
+      // More specific error handling
+      const errorMessage = error.response?.status === 401 
+        ? 'You must be logged in to save your budget.' 
+        : 'Failed to save budget. Please try again.';
+      
+      toast.error(errorMessage);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   // Handle income change
   const handleIncomeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -126,6 +239,7 @@ const BudgetCalculator: React.FC = () => {
 
   return (
     <div className="budget-calculator-container">
+      <ToastContainer position="top-right" autoClose={3000} />
       <h2 className="calculator-title">Simple Budget Calculator</h2>
       
       <div className="budget-calculator-content">
@@ -210,6 +324,17 @@ const BudgetCalculator: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
+      
+      {/* Save Budget Button */}
+      <div className="save-budget-container">
+        <button 
+          className="save-budget-button" 
+          onClick={saveBudgetData}
+          disabled={isSaving}
+        >
+          {isSaving ? 'Saving...' : 'Save Budget'}
+        </button>
       </div>
       
       {/* Swipe Logo */}

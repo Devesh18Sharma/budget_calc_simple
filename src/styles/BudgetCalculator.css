@@ -164,7 +164,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  width: 120px;
+  width: 96px;
   height: 36px;
 }
 
@@ -181,7 +181,6 @@
 .input-container input {
   width: 100%;
   height: 100%;
-  padding: 0 0.5rem 0 24px; 
   font-size: 0.95rem;
   border: none;
   background-color: transparent;
@@ -454,4 +453,34 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+/* Save Budget Button */
+.save-budget-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+.save-budget-button {
+  background-color: #1273CD;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.save-budget-button:hover {
+  background-color: #0D5CA7;
+}
+
+.save-budget-button:disabled {
+  background-color: #97B9DD;
+  cursor: not-allowed;
 }
